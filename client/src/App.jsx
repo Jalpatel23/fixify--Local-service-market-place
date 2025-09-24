@@ -22,7 +22,7 @@ import DashboardPage from './pages/DashboardPage';
 import MyJobsPage from './pages/MyJobsPage';
 import SavedJobsPage from './pages/SavedJobsPage';
 import ProfilePage from './pages/ProfilePage';
-import OnboardingPage from './pages/OnboardingPage';
+// Removed OnboardingPage: replaced by Profile page updates
 import AuthPage from './pages/AuthPage'; 
 import NotFoundPage from './pages/NotFoundPage';
 import MessagingPage from './components/Messaging/MessagingPage';
@@ -142,14 +142,8 @@ function AppRoutes() {
               </SignedIn>
             }
           />
-          <Route
-            path="/onboarding"
-            element={
-              <SignedIn>
-                <OnboardingPage />
-              </SignedIn>
-            }
-          />
+          {/* /onboarding removed; redirect to profile for backward compatibility */}
+          <Route path="/onboarding" element={<ProfilePage />} />
           <Route
             path="/messages"
             element={

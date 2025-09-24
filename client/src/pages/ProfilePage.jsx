@@ -18,6 +18,8 @@ const ProfilePage = () => {
     preferences: { ...(profile?.preferences || {}), maxDistance: milesToKm(profile?.preferences?.maxDistance || 25) },
     skills: profile?.skills || [],
   });
+  // Keep a string version for stable typing/backspace handling
+  const [maxDistanceKmInput, setMaxDistanceKmInput] = React.useState(String(milesToKm(profile?.preferences?.maxDistance || 25)));
   const [location, setLocation] = React.useState(profile?.location || null);
 
   React.useEffect(() => {
@@ -26,6 +28,7 @@ const ProfilePage = () => {
       preferences: { ...(profile?.preferences || {}), maxDistance: milesToKm(profile?.preferences?.maxDistance || 25) },
       skills: profile?.skills || [],
     });
+    setMaxDistanceKmInput(String(milesToKm(profile?.preferences?.maxDistance || 25)));
     setLocation(profile?.location || null);
   }, [profile]);
 
@@ -76,13 +79,23 @@ const ProfilePage = () => {
 
   const handleSave = (e) => {
     e.preventDefault();
+    // Sanitize and clamp distance (km) before converting to miles
+    const parsedKm = Math.max(1, Math.min(160, Number(maxDistanceKmInput || 0)));
     updateProfile({
       accountType: form.accountType,
       location: location || undefined,
-      preferences: { ...form.preferences, maxDistance: kmToMiles(form.preferences?.maxDistance) },
+      preferences: { ...form.preferences, maxDistance: kmToMiles(parsedKm) },
       skills: form.skills,
     });
   };
+
+  // Memoize LocationPicker to avoid heavy rerenders while typing
+  const locationPicker = React.useMemo(() => (
+    <LocationPicker
+      value={location && location.coordinates ? { lat: location.coordinates[1], lng: location.coordinates[0], address: location.address?.formatted } : null}
+      onChange={handlePickerChange}
+    />
+  ), [location]);
 
   return (
     <div className="min-h-screen bg-secondary-50 dark:bg-secondary-900">
@@ -140,8 +153,30 @@ const ProfilePage = () => {
             <h2 className="text-xl font-semibold mb-2">Preferences</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Max distance (kilometers)</label>
-                <Input type="number" min={1} max={160} value={form.preferences?.maxDistance || 40} onChange={(e) => setForm(v => ({ ...v, preferences: { ...v.preferences, maxDistance: Number(e.target.value) } }))} />
+              <label className="block text-sm font-medium mb-1">Max distance (kilometers)</label>
+              <Input
+                type="number"
+                min={1}
+                max={160}
+                value={maxDistanceKmInput}
+                onChange={(e) => {
+                  const next = e.target.value;
+                  // Allow empty string while typing
+                  if (next === '') {
+                    setMaxDistanceKmInput('');
+                    return;
+                  }
+                  // Only update if numeric
+                  if (/^\d+$/.test(next)) {
+                    setMaxDistanceKmInput(next);
+                  }
+                }}
+                onBlur={() => {
+                  // Normalize to bounds on blur
+                  const num = Math.max(1, Math.min(160, Number(maxDistanceKmInput || 0)));
+                  setMaxDistanceKmInput(String(num));
+                }}
+              />
               </div>
             </div>
           </div>

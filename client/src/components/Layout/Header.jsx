@@ -25,6 +25,9 @@ const Header = () => {
     navigation.push({ name: 'Admin', href: '/admin', public: false });
   }
 
+  // Always show Profile entry; require auth to access
+  navigation.push({ name: 'Profile', href: '/profile', public: false });
+
   return (
     <header className="bg-white dark:bg-secondary-800 shadow-sm border-b border-secondary-200 dark:border-secondary-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -194,7 +194,15 @@ export const useAuth = () => {
   // Check if user has completed profile
   const hasCompletedProfile = () => {
     if (!profile) return false;
-    return !!(profile.firstName && profile.lastName && profile.location?.coordinates);
+    // Accept either split names or a fullName, and allow either coordinates or an address
+    const hasName = !!(
+      (profile.firstName && profile.lastName) ||
+      profile.fullName ||
+      (user?.firstName && user?.lastName)
+    );
+    const loc = profile.location;
+    const hasLocation = !!(loc?.coordinates?.length === 2 || loc?.address?.formatted || (Array.isArray(loc?.coordinates) && loc.coordinates.length === 2));
+    return hasName && hasLocation;
   };
   
   // Get user's notification settings
