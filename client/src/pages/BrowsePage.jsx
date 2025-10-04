@@ -49,6 +49,31 @@ const BrowsePage = () => {
     }
   };
 
+  const sortJobsByDistance = () => {
+    if (!userLocation) return;
+    
+    setAllJobs(prevJobs => {
+      const jobsWithDistance = prevJobs.map(job => {
+        if (!job.location?.coordinates) {
+          return { ...job, distance: Infinity };
+        }
+        
+        const distance = calculateDistance(
+          userLocation.lat,
+          userLocation.lng,
+          job.location.coordinates[1],
+          job.location.coordinates[0]
+        );
+        
+        return { ...job, distance };
+      });
+      
+      const sortedJobs = jobsWithDistance.sort((a, b) => a.distance - b.distance);
+      
+      return sortedJobs;
+    });
+  };
+
   // Fetch initial jobs from API
   const { data: initialJobsData, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ['jobs', searchTerm, selectedCategory, sortBy, savedOnly, myJobsOnly, componentId, forceRefresh],
@@ -64,11 +89,7 @@ const BrowsePage = () => {
       if (searchTerm) params.append('search', searchTerm);
       if (selectedCategory) params.append('category', selectedCategory);
       // Don't pass status parameter to show all jobs (open, accepted, completed, etc.)
-      if (userLocation) {
-        params.append('latitude', userLocation.lat);
-        params.append('longitude', userLocation.lng);
-        params.append('distance', searchRadius);
-      }
+      // Note: Location-based filtering is handled client-side for sorting only
       
       // Map frontend sort values to backend parameters
       let sortByParam, sortOrderParam;
@@ -158,6 +179,13 @@ const BrowsePage = () => {
     }
   }, [initialJobsData]);
 
+  // Sort jobs by distance when userLocation is available and jobs are loaded
+  React.useEffect(() => {
+    if (userLocation && allJobs.length > 0) {
+      sortJobsByDistance();
+    }
+  }, [userLocation, allJobs]);
+
   // Debounced search effect
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -199,6 +227,7 @@ const BrowsePage = () => {
       sortBy,
       savedOnly,
       myJobsOnly,
+      userLocation,
       mounted
     });
   }, [componentId, forceRefresh, isLoading, isFetching, initialJobsData, allJobs.length, allJobs, searchTerm, selectedCategory, sortBy, savedOnly, myJobsOnly, mounted]);
@@ -212,6 +241,7 @@ const BrowsePage = () => {
       const params = new URLSearchParams();
       if (searchTerm) params.append('search', searchTerm);
       if (selectedCategory) params.append('category', selectedCategory);
+      // Note: Location-based filtering is handled client-side for sorting only
       
       // Map frontend sort values to backend parameters
       let sortByParam, sortOrderParam;
@@ -353,33 +383,6 @@ const BrowsePage = () => {
             Find local service opportunities in your area
           </p>
         </div>
-        {/* Location & Radius Controls */}
-        <div className="flex flex-wrap gap-4 mb-4 items-center">
-          <button
-            onClick={getLocation}
-            disabled={locationLoading}
-            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50"
-          >
-            {locationLoading ? 'Getting location...' : (userLocation ? 'Update Location' : 'Find Jobs Near Me')}
-          </button>
-          {userLocation && (
-            <div className="flex items-center gap-2">
-              <span className="text-secondary-700 dark:text-secondary-300">Radius:</span>
-              <input
-                type="number"
-                min={1}
-                max={100}
-                value={searchRadius}
-                onChange={e => setSearchRadius(Number(e.target.value))}
-                className="w-20 px-2 py-1 border rounded"
-              />
-              <span className="text-secondary-700 dark:text-secondary-300">kilometers</span>
-            </div>
-          )}
-          {userLocation && (
-            <span className="text-xs text-secondary-500 dark:text-secondary-400">Location: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}</span>
-          )}
-        </div>
 
         {/* Filters */}
         <div className="bg-white dark:bg-secondary-800 rounded-lg shadow-sm border border-secondary-200 dark:border-secondary-700 p-6 mb-8">
@@ -428,22 +431,35 @@ const BrowsePage = () => {
           </div>
 
           {/* Extra toggles */}
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={`mt-4 grid grid-cols-1 gap-4 ${isLoaded && isSignedIn && tokenReady ? 'md:grid-cols-3' : 'md:grid-cols-1'}`}>
+            {isLoaded && isSignedIn && tokenReady && (
+              <>
+                <label className="inline-flex items-center gap-2 text-secondary-700 dark:text-secondary-300">
+                  <input
+                    type="checkbox"
+                    checked={savedOnly}
+                    onChange={(e) => { setSavedOnly(e.target.checked); if (e.target.checked) setMyJobsOnly(false); }}
+                  />
+                  <span>Saved only</span>
+                </label>
+                <label className="inline-flex items-center gap-2 text-secondary-700 dark:text-secondary-300">
+                  <input
+                    type="checkbox"
+                    checked={myJobsOnly}
+                    onChange={(e) => { setMyJobsOnly(e.target.checked); if (e.target.checked) setSavedOnly(false); }}
+                  />
+                  <span>My jobs</span>
+                </label>
+              </>
+            )}
             <label className="inline-flex items-center gap-2 text-secondary-700 dark:text-secondary-300">
               <input
                 type="checkbox"
-                checked={savedOnly}
-                onChange={(e) => { setSavedOnly(e.target.checked); if (e.target.checked) setMyJobsOnly(false); }}
+                checked={!!userLocation}
+                onChange={() => getLocation()}
+                disabled={locationLoading}
               />
-              <span>Saved only</span>
-            </label>
-            <label className="inline-flex items-center gap-2 text-secondary-700 dark:text-secondary-300">
-              <input
-                type="checkbox"
-                checked={myJobsOnly}
-                onChange={(e) => { setMyJobsOnly(e.target.checked); if (e.target.checked) setSavedOnly(false); }}
-              />
-              <span>My jobs</span>
+              <span>{locationLoading ? 'Getting location...' : 'Find distance'}</span>
             </label>
           </div>
         </div>
