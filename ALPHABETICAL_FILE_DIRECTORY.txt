@@ -1,0 +1,181 @@
+FIXIFY CODESPACE - TEXT-BASED DIRECTORY TREE
+============================================
+
+fixify/ (3 files, 2 folders)
+├── client/ (8 files, 1 folders)
+│   ├── env.example
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── README.md
+│   ├── tailwind.config.js
+│   ├── vite.config.js
+│   └── src/ (4 files, 5 folders)
+│       ├── App.css
+│       ├── App.jsx
+│       ├── index.css
+│       ├── main.jsx
+│       ├── components/ (0 files, 14 folders)
+│       │   ├── Admin/ (8 files, 0 folders)
+│       │   │   ├── AdminDashboard.jsx
+│       │   │   ├── AdminLayout.jsx
+│       │   │   ├── AdminSettings.jsx
+│       │   │   ├── AnalyticsDashboard.jsx
+│       │   │   ├── index.js
+│       │   │   ├── JobModeration.jsx
+│       │   │   ├── ReviewModeration.jsx
+│       │   │   └── UserManagement.jsx
+│       │   ├── Auth/ (2 files, 0 folders)
+│       │   │   ├── AuthGuard.jsx
+│       │   │   └── AuthPrompt.jsx
+│       │   ├── Jobs/ (5 files, 0 folders)
+│       │   │   ├── index.js
+│       │   │   ├── JobCard.jsx
+│       │   │   ├── JobForm.jsx
+│       │   │   ├── JobScheduler.jsx
+│       │   │   └── JobTemplate.jsx
+│       │   ├── Layout/ (3 files, 0 folders)
+│       │   │   ├── Footer.jsx
+│       │   │   ├── Header.jsx
+│       │   │   └── Layout.jsx
+│       │   ├── Map/ (4 files, 0 folders)
+│       │   │   ├── index.js
+│       │   │   ├── JobsMap.jsx
+│       │   │   ├── LocationPicker.jsx
+│       │   │   └── Map.jsx
+│       │   ├── Messaging/ (4 files, 0 folders)
+│       │   │   ├── ConversationList.jsx
+│       │   │   ├── index.js
+│       │   │   ├── MessageList.jsx
+│       │   │   └── MessagingPage.jsx
+│       │   ├── Mobile/ (3 files, 0 folders)
+│       │   │   ├── index.js
+│       │   │   ├── MobileJobCard.jsx
+│       │   │   └── MobileNavigation.jsx
+│       │   ├── Notifications/ (5 files, 0 folders)
+│       │   │   ├── index.js
+│       │   │   ├── NotificationBell.jsx
+│       │   │   ├── NotificationCenter.jsx
+│       │   │   ├── NotificationPreferences.jsx
+│       │   │   └── NotificationToast.jsx
+│       │   ├── Payments/ (3 files, 0 folders)
+│       │   │   ├── index.js
+│       │   │   ├── PaymentForm.jsx
+│       │   │   └── PaymentHistory.jsx
+│       │   ├── Profile/ (6 files, 0 folders)
+│       │   │   ├── AvailabilityManager.jsx
+│       │   │   ├── EnhancedUserProfile.jsx
+│       │   │   ├── index.js
+│       │   │   ├── ProfileCard.jsx
+│       │   │   ├── SkillEndorsements.jsx
+│       │   │   └── UserVerification.jsx
+│       │   ├── Providers/ (1 file, 0 folders)
+│       │   │   └── ThemeProvider.jsx
+│       │   ├── Reviews/ (5 files, 0 folders)
+│       │   │   ├── index.js
+│       │   │   ├── ReviewCard.jsx
+│       │   │   ├── ReviewForm.jsx
+│       │   │   ├── ReviewList.jsx
+│       │   │   └── ReviewStats.jsx
+│       │   ├── Search/ (2 files, 0 folders)
+│       │   │   ├── AdvancedSearch.jsx
+│       │   │   └── index.js
+│       │   └── UI/ (17 files, 0 folders)
+│       │       ├── Avatar.jsx
+│       │       ├── Badge.jsx
+│       │       ├── Button.jsx
+│       │       ├── Card.jsx
+│       │       ├── ConfirmationModal.jsx
+│       │       ├── ConfirmModal.jsx
+│       │       ├── EmptyState.jsx
+│       │       ├── ErrorFallback.jsx
+│       │       ├── FilterPanel.jsx
+│       │       ├── index.js
+│       │       ├── Input.jsx
+│       │       ├── LoadingSpinner.jsx
+│       │       ├── Modal.jsx
+│       │       ├── Pagination.jsx
+│       │       ├── SearchBar.jsx
+│       │       ├── Spinner.jsx
+│       │       └── StatsCard.jsx
+│       ├── hooks/ (4 files, 0 folders)
+│       │   ├── useAuth.js
+│       │   ├── useLocation.js
+│       │   ├── useMobile.js
+│       │   └── useNotifications.js
+│       ├── pages/ (17 files, 0 folders)
+│       │   ├── AdminAnalyticsPage.jsx
+│       │   ├── AdminJobsPage.jsx
+│       │   ├── AdminPage.jsx
+│       │   ├── AdminReviewsPage.jsx
+│       │   ├── AdminSettingsPage.jsx
+│       │   ├── AdminUsersPage.jsx
+│       │   ├── AuthPage.jsx
+│       │   ├── BrowsePage.jsx
+│       │   ├── DashboardPage.jsx
+│       │   ├── HomePage.jsx
+│       │   ├── JobDetailPage.jsx
+│       │   ├── MessagesPage.jsx
+│       │   ├── MyJobsPage.jsx
+│       │   ├── NotFoundPage.jsx
+│       │   ├── PostJobPage.jsx
+│       │   ├── ProfilePage.jsx
+│       │   └── SavedJobsPage.jsx
+│       ├── services/ (2 files, 0 folders)
+│       │   ├── api.js
+│       │   └── socket.js
+│       └── utils/ (2 files, 0 folders)
+│           ├── config.js
+│           └── mapUtils.js
+├── server/ (4 files, 6 folders)
+│   ├── env.example
+│   ├── package.json
+│   ├── README.md
+│   ├── server.js
+│   ├── controllers/ (9 files, 0 folders)
+│   │   ├── adminController.js
+│   │   ├── authController.js
+│   │   ├── browseController.js
+│   │   ├── index.js
+│   │   ├── jobController.js
+│   │   ├── messageController.js
+│   │   ├── paymentController.js
+│   │   ├── reviewController.js
+│   │   └── searchController.js
+│   ├── middleware/ (3 files, 0 folders)
+│   │   ├── admin.js
+│   │   ├── auth.js
+│   │   └── index.js
+│   ├── models/ (7 files, 0 folders)
+│   │   ├── index.js
+│   │   ├── Job.js
+│   │   ├── Message.js
+│   │   ├── Notification.js
+│   │   ├── Payment.js
+│   │   ├── Review.js
+│   │   └── User.js
+│   ├── routes/ (10 files, 0 folders)
+│   │   ├── admin.js
+│   │   ├── auth.js
+│   │   ├── browse.js
+│   │   ├── index.js
+│   │   ├── jobs.js
+│   │   ├── messages.js
+│   │   ├── notifications.js
+│   │   ├── payments.js
+│   │   ├── reviews.js
+│   │   └── search.js
+│   ├── scripts/ (2 files, 0 folders)
+│   │   ├── fixSavedByData.js
+│   │   └── seed-database.js
+│   └── utils/ (6 files, 0 folders)
+│       ├── clerk.js
+│       ├── database.js
+│       ├── errors.js
+│       ├── index.js
+│       ├── logger.js
+│       └── validation.js
+├── FIXIFY_DIRECTORY_TREE_COMPLETE.txt
+├── README.md
+└── package-lock.json

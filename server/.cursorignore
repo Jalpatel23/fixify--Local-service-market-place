@@ -1,0 +1,125 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env*
+!.env.example
+
+# Logs
+*.log
+logs/
+
+# Cache directories
+.cache/
+.eslintcache/
+
+# Coverage and test results
+coverage/
+.nyc_output/
+test-results/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Upload directories
+uploads/
+public/uploads/
+
+# SSL certificates
+*.pem
+*.key
+*.crt
+
+# Docker files
+.dockerignore
+docker-compose.override.yml
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Local development files
+.local/
+.localhost/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+
+# PM2
+.pm2/
+
+# MongoDB data
+data/
+mongodb/
+
+# Redis data
+dump.rdb
+
+# Session store
+sessions/
+
+# File uploads
+uploads/
+temp-uploads/
+
+# Backup directories
+backups/
+backup/
+
+# Cache directories
+.cache/
+cache/
+
+# Local logs
+logs/
+*.log
+
+# Process files
+*.pid
+
+# Lock files
+*.lock
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build outputs
+build/
+dist/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Local configuration
+config/local.js
+config/local.json 
+
+
+report.txt
