@@ -499,7 +499,7 @@ const BrowsePage = () => {
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(job.status)}`}>
                       {job.status.replace('_', ' ').toUpperCase()}
                     </span>
-                    {profile?.data?.data?._id && job.creator?._id === profile.data.data._id && (
+                    {profile?._id && job.creator?._id === profile._id && (
                       <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full text-xs font-medium">
                         YOUR JOB
                       </span>
@@ -570,7 +570,7 @@ const BrowsePage = () => {
                     </span>
                     
                     {/* Action buttons for logged-in users */}
-                    {profile?.data?.data?._id && job.creator?._id !== profile.data.data._id && (
+                    {profile?._id && job.creator?._id !== profile._id && (
                       <>
                         <AuthPrompt requireAuth={true} promptMessage="Please sign in to save this job">
                           <button

@@ -297,7 +297,7 @@ const JobDetailPage = () => {
   };
 
   const canAcceptJob = () => {
-    const userId = profile?.data?.data?._id;
+    const userId = profile?._id;
     return job &&
            job.status === 'open' &&
            userId &&
@@ -305,7 +305,7 @@ const JobDetailPage = () => {
   };
 
   const canCompleteJob = () => {
-    const userId = profile?.data?.data?._id;
+    const userId = profile?._id;
     return job &&
            (job.status === 'accepted' || job.status === 'in_progress') &&
            userId &&
@@ -313,7 +313,7 @@ const JobDetailPage = () => {
   };
 
   const canCancelJob = () => {
-    const userId = profile?.data?.data?._id;
+    const userId = profile?._id;
     return job &&
            (job.status === 'accepted' || job.status === 'in_progress') &&
            userId &&
@@ -321,7 +321,7 @@ const JobDetailPage = () => {
   };
 
   const canReopenJob = () => {
-    const userId = profile?.data?.data?._id;
+    const userId = profile?._id;
     return job &&
            (job.status === 'accepted' || job.status === 'in_progress') &&
            userId &&
@@ -330,13 +330,13 @@ const JobDetailPage = () => {
 
   // Check if job is saved by current user
   const isJobSaved = () => {
-    const userId = profile?.data?.data?._id;
+    const userId = profile?._id;
     return job?.stats?.savedBy?.includes(userId) || false;
   };
 
   // Check if user can save this job (not their own job)
   const canSaveJob = () => {
-    const userId = profile?.data?.data?._id;
+    const userId = profile?._id;
     return job && userId && job.creator?._id !== userId;
   };
 
@@ -479,7 +479,7 @@ const JobDetailPage = () => {
                       <Eye className="w-4 h-4 mr-1" />
                       {job.stats?.views || 0} views
                     </div>
-                    {profile?.data?.data?._id && job.creator?._id === profile.data.data._id && (
+                    {profile?._id && job.creator?._id === profile._id && (
                       <span className="px-2 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded-full text-xs font-medium">
                         YOUR JOB
                       </span>
@@ -586,7 +586,7 @@ const JobDetailPage = () => {
                 </AuthPrompt>
 
                 <AuthPrompt requireAuth={true} promptMessage="Please sign in to message the job creator">
-                  {job.creator && profile?.data?.data?._id !== job.creator._id && (
+                  {job.creator && profile?._id !== job.creator._id && (
                     <Link
                       to={`/messages?user=${job.creator._id}`}
                       className="inline-flex items-center px-4 py-3 border border-secondary-300 dark:border-secondary-600 text-secondary-700 dark:text-secondary-300 rounded-lg hover:bg-secondary-50 dark:hover:bg-secondary-700 transition-colors"
@@ -899,7 +899,7 @@ const JobDetailPage = () => {
 
                     <div className="flex items-center space-x-3 mt-3">
                       <AuthPrompt requireAuth={true} promptMessage="Please sign in to message this user">
-                        {profile?.data?.data?._id !== job.creator._id && (
+                        {profile?._id !== job.creator._id && (
                           <Link
                             to={`/messages?user=${job.creator._id}`}
                             className="inline-flex items-center text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"

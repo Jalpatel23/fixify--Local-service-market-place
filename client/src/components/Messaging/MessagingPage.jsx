@@ -186,12 +186,12 @@ const MessagingPage = () => {
       // if (isStartingConversation) console.log('- Already starting conversation');
       // if (hasProcessedUrl) console.log('- Already processed URL');
     }
-  }, [searchParams, profile?.data?.data?._id, isStartingConversation, hasProcessedUrl, startConversationWithUser, loadConversationsList]);
+  }, [searchParams, profile?._id, isStartingConversation, hasProcessedUrl, startConversationWithUser, loadConversationsList]);
 
   // Process messages when profile data becomes available
   useEffect(() => {
-    if (profile?.data?.data?._id && messages.length > 0) {
-      const currentUserId = profile.data.data._id;
+    if (profile?._id && messages.length > 0) {
+      const currentUserId = profile._id;
       // console.log('=== PROCESSING MESSAGES WITH PROFILE ===');
       // console.log('Current user ID:', currentUserId);
       // console.log('Processing', messages.length, 'messages');
