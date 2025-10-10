@@ -62,12 +62,20 @@ const MessagesPage = () => {
   // Handle URL parameters for user-specific conversations
   useEffect(() => {
     const targetUserId = searchParams.get('user');
-    if (targetUserId && profile?.data?.data?._id) {
+    console.log('=== MessagesPage useEffect triggered ===');
+    console.log('Target user ID from URL:', targetUserId);
+    console.log('Profile user ID:', profile?._id);
+    
+    if (targetUserId && profile?._id) {
+      console.log('Starting conversation with user:', targetUserId);
       startConversationWithUser(targetUserId);
     } else if (!targetUserId) {
+      console.log('Loading conversations list');
       loadConversations();
+    } else {
+      console.log('Waiting for profile data...');
     }
-  }, [searchParams, profile?.data?.data?._id]);
+  }, [searchParams, profile?._id]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -139,7 +147,7 @@ const MessagesPage = () => {
       const loadedMessages = response.data?.data || [];
       
       // Process messages to determine ownership
-      const currentUserId = profile?.data?.data?._id;
+      const currentUserId = profile?._id;
       const processedMessages = loadedMessages.map(msg => ({
         ...msg,
         isOwn: msg.sender._id === currentUserId
@@ -151,10 +159,15 @@ const MessagesPage = () => {
     } finally {
       setIsLoadingMessages(false);
     }
-  }, [profile?.data?.data?._id]);
+  }, [profile?._id]);
 
   // Send message
   const sendMessage = async () => {
+    console.log('sendMessage called');
+    console.log('newMessage:', newMessage);
+    console.log('selectedConversation:', selectedConversation);
+    console.log('profile:', profile);
+    
     if (!newMessage.trim() || !selectedConversation || isSending) return;
 
     try {
@@ -165,9 +178,9 @@ const MessagesPage = () => {
         id: Date.now(),
         content: newMessage.trim(),
         sender: {
-          _id: profile?.data?.data?._id,
-          firstName: profile?.data?.data?.firstName || 'You',
-          lastName: profile?.data?.data?.lastName || ''
+          _id: profile?._id,
+          firstName: profile?.firstName || 'You',
+          lastName: profile?.lastName || ''
         },
         recipient: {
           _id: selectedConversation.otherUser._id,
@@ -189,7 +202,9 @@ const MessagesPage = () => {
         type: 'text'
       };
 
+      console.log('Sending message to server:', messageData);
       const response = await apiService.messages.sendMessage(messageData);
+      console.log('Message sent successfully:', response);
       
       // Update message with server response
       setMessages(prev => prev.map(msg => 

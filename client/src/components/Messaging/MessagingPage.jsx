@@ -55,6 +55,7 @@ const MessagingPage = () => {
   const startConversationWithUser = useCallback(async (targetUserId) => {
     try {
       console.log('=== Starting conversation with user:', targetUserId);
+      console.log('Profile data:', profile);
       setIsStartingConversation(true);
 
       // Create a simple conversation object without complex API calls
@@ -161,30 +162,30 @@ const MessagingPage = () => {
   // Handle user query parameter to start conversation OR load conversations list
   useEffect(() => {
     const currentTargetUserId = searchParams.get('user');
-    const currentProfileUserId = profile?.data?.data?._id;
+    const currentProfileUserId = profile?._id;
 
-    // console.log('=== MessagingPage useEffect triggered ===');
-    // console.log('Target user ID from URL:', currentTargetUserId);
-    // console.log('Profile user ID:', currentProfileUserId);
-    // console.log('Is starting conversation:', isStartingConversation);
-    // console.log('Has processed URL:', hasProcessedUrl);
+    console.log('=== MessagingPage useEffect triggered ===');
+    console.log('Target user ID from URL:', currentTargetUserId);
+    console.log('Profile user ID:', currentProfileUserId);
+    console.log('Is starting conversation:', isStartingConversation);
+    console.log('Has processed URL:', hasProcessedUrl);
 
     if (currentTargetUserId && currentProfileUserId && !isStartingConversation && !hasProcessedUrl) {
       // Start conversation with specific user
-      // console.log('Conditions met, starting conversation...');
+      console.log('Conditions met, starting conversation...');
       setHasProcessedUrl(true);
       startConversationWithUser(currentTargetUserId);
     } else if (!currentTargetUserId && currentProfileUserId && !hasProcessedUrl) {
       // Load conversations list for main messages page
-      // console.log('Loading conversations list for main messages page...');
+      console.log('Loading conversations list for main messages page...');
       setHasProcessedUrl(true);
       loadConversationsList();
     } else {
-      // console.log('Conditions not met for starting conversation');
-      // if (!currentTargetUserId) console.log('- No target user ID');
-      // if (!currentProfileUserId) console.log('- No profile data');
-      // if (isStartingConversation) console.log('- Already starting conversation');
-      // if (hasProcessedUrl) console.log('- Already processed URL');
+      console.log('Conditions not met for starting conversation');
+      if (!currentTargetUserId) console.log('- No target user ID');
+      if (!currentProfileUserId) console.log('- No profile data');
+      if (isStartingConversation) console.log('- Already starting conversation');
+      if (hasProcessedUrl) console.log('- Already processed URL');
     }
   }, [searchParams, profile?._id, isStartingConversation, hasProcessedUrl, startConversationWithUser, loadConversationsList]);
 
@@ -254,6 +255,11 @@ const MessagingPage = () => {
   };
 
   const handleSendMessage = async () => {
+    console.log('handleSendMessage called');
+    console.log('newMessage:', newMessage);
+    console.log('selectedConversation:', selectedConversation);
+    console.log('profile:', profile);
+    
     if (newMessage.trim() && selectedConversation) {
       try {
         // Create optimistic message for immediate UI update
@@ -261,9 +267,9 @@ const MessagingPage = () => {
           id: Date.now(),
           content: newMessage.trim(),
           sender: {
-            _id: profile?.data?.data?._id,
-            firstName: profile?.data?.data?.firstName || 'You',
-            lastName: profile?.data?.data?.lastName || ''
+            _id: profile?._id,
+            firstName: profile?.firstName || 'You',
+            lastName: profile?.lastName || ''
           },
           recipient: {
             _id: selectedConversation.otherUser._id,
@@ -285,9 +291,9 @@ const MessagingPage = () => {
           type: 'text'
         };
 
-        // console.log('Sending message to server:', messageData);
+        console.log('Sending message to server:', messageData);
         const response = await apiService.messages.sendMessage(messageData);
-        // console.log('Message sent successfully:', response);
+        console.log('Message sent successfully:', response);
 
       } catch (error) {
         console.error('Error sending message:', error);
