@@ -288,9 +288,9 @@ const MessagesPage = () => {
   if (isSingleConversation) {
     // Single conversation UI (no sidebar)
     return (
-      <div className="w-full h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <div className="w-full h-screen bg-secondary-50 dark:bg-secondary-900 flex flex-col">
         {/* Header */}
-        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="bg-white dark:bg-secondary-800 border-b border-secondary-200 dark:border-secondary-700 px-6 py-4">
           <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
@@ -309,10 +309,10 @@ const MessagesPage = () => {
               />
             )}
             <div>
-              <h2 className="font-semibold text-gray-900 dark:text-white">
+              <h2 className="font-semibold text-secondary-900 dark:text-secondary-100">
                 {selectedConversation?.otherUser.firstName} {selectedConversation?.otherUser.lastName}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-secondary-500 dark:text-secondary-400">
                 {selectedConversation?.lastMessage?.content || 'Start a conversation...'}
               </p>
             </div>
@@ -333,7 +333,7 @@ const MessagesPage = () => {
                 <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                   message.isOwn
                     ? 'bg-blue-500 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                    : 'bg-secondary-100 dark:bg-secondary-700 text-secondary-900 dark:text-secondary-100'
                 }`}>
                   <p className="text-sm">{message.content}</p>
                   <div className="flex items-center justify-between mt-1">
@@ -357,11 +357,11 @@ const MessagesPage = () => {
             ))
           ) : (
             <div className="flex flex-col items-center justify-center h-32 text-center">
-              <MessageCircle className="w-12 h-12 text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              <MessageCircle className="w-12 h-12 text-secondary-400 mb-4" />
+              <h3 className="text-lg font-medium text-secondary-900 dark:text-secondary-100 mb-2">
                 Start your conversation
               </h3>
-              <p className="text-gray-500 dark:text-gray-400">
+              <p className="text-secondary-500 dark:text-secondary-400">
                 Send a message to begin chatting with {selectedConversation?.otherUser.firstName}
               </p>
             </div>
@@ -369,7 +369,7 @@ const MessagesPage = () => {
           <div ref={messagesEndRef} />
         </div>
         {/* Message Input */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-t border-secondary-200 dark:border-secondary-700">
           <div className="flex items-center space-x-2 max-w-2xl mx-auto w-full">
             <Button
               variant="ghost"
@@ -412,15 +412,15 @@ const MessagesPage = () => {
   }
 
   return (
-    <div className="w-full h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="w-full h-screen bg-secondary-50 dark:bg-secondary-900 flex flex-col">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+      <div className="bg-white dark:bg-secondary-800 border-b border-secondary-200 dark:border-secondary-700 px-6 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-secondary-900 dark:text-secondary-100">
               Messages
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-secondary-500 dark:text-secondary-400">
               Connect with job posters and helpers
             </p>
           </div>
@@ -439,11 +439,11 @@ const MessagesPage = () => {
 
       <div className="flex h-[calc(100vh-80px)]">
         {/* Conversations List */}
-        <div className={`${isMobile && selectedConversation ? 'hidden' : 'w-full md:w-80'} bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col`}>
+        <div className={`${isMobile && selectedConversation ? 'hidden' : 'w-full md:w-80'} bg-white dark:bg-secondary-800 border-r border-secondary-200 dark:border-secondary-700 flex flex-col`}>
           {/* Search */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="p-4 border-b border-secondary-200 dark:border-secondary-700">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-secondary-400" />
               <Input
                 type="text"
                 placeholder="Search conversations..."
@@ -461,11 +461,11 @@ const MessagesPage = () => {
                 <LoadingSpinner size="md" />
               </div>
             ) : filteredConversations.length > 0 ? (
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="divide-y divide-secondary-200 dark:divide-secondary-700">
                 {filteredConversations.map((conversation) => (
                   <div
                     key={conversation.conversationId}
-                    className={`p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+                    className={`p-4 cursor-pointer hover:bg-secondary-50 dark:hover:bg-secondary-700 transition-colors ${
                       selectedConversation?.conversationId === conversation.conversationId
                         ? 'bg-blue-50 dark:bg-blue-900/20 border-r-2 border-blue-500'
                         : ''
@@ -481,14 +481,14 @@ const MessagesPage = () => {
                       />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <h3 className="font-medium text-gray-900 dark:text-white truncate">
+                          <h3 className="font-medium text-secondary-900 dark:text-secondary-100 truncate">
                             {conversation.otherUser.firstName} {conversation.otherUser.lastName}
                           </h3>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                          <span className="text-xs text-secondary-500 dark:text-secondary-400">
                             {formatTimestamp(conversation.lastMessage?.createdAt)}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
+                        <p className="text-sm text-secondary-600 dark:text-secondary-300 truncate">
                           {conversation.lastMessage?.content || 'No messages yet'}
                         </p>
                         {conversation.unreadCount > 0 && (
@@ -503,11 +503,11 @@ const MessagesPage = () => {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-32 text-center">
-                <MessageCircle className="w-12 h-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <MessageCircle className="w-12 h-12 text-secondary-400 mb-4" />
+                <h3 className="text-lg font-medium text-secondary-900 dark:text-secondary-100 mb-2">
                   No conversations yet
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className="text-secondary-500 dark:text-secondary-400">
                   Start messaging with other users to see conversations here
                 </p>
               </div>
@@ -516,11 +516,11 @@ const MessagesPage = () => {
         </div>
 
         {/* Messages Area */}
-        <div className={`${isMobile && !selectedConversation ? 'hidden' : 'flex-1'} bg-white dark:bg-gray-800 flex flex-col`}>
+        <div className={`${isMobile && !selectedConversation ? 'hidden' : 'flex-1'} bg-white dark:bg-secondary-800 flex flex-col`}>
           {selectedConversation ? (
             <>
               {/* Conversation Header */}
-              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between p-4 border-b border-secondary-200 dark:border-secondary-700">
                 <div className="flex items-center space-x-3">
                   {isMobile && (
                     <Button
@@ -539,15 +539,15 @@ const MessagesPage = () => {
                     size="md"
                   />
                   <div>
-                    <h2 className="font-semibold text-gray-900 dark:text-white">
+                    <h2 className="font-semibold text-secondary-900 dark:text-secondary-100">
                       {selectedConversation.otherUser.firstName} {selectedConversation.otherUser.lastName}
                     </h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-secondary-500 dark:text-secondary-400">
                       {selectedConversation.lastMessage?.content || 'Start a conversation...'}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                {/* <div className="flex items-center space-x-2">
                   <Button variant="ghost" size="sm">
                     <Phone className="w-4 h-4" />
                   </Button>
@@ -557,7 +557,7 @@ const MessagesPage = () => {
                   <Button variant="ghost" size="sm">
                     <MoreVertical className="w-4 h-4" />
                   </Button>
-                </div>
+                </div> */}
               </div>
 
               {/* Messages */}
@@ -575,7 +575,7 @@ const MessagesPage = () => {
                       <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                         message.isOwn
                           ? 'bg-blue-500 text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                          : 'bg-secondary-100 dark:bg-secondary-700 text-secondary-900 dark:text-secondary-100'
                       }`}>
                         <p className="text-sm">{message.content}</p>
                         <div className="flex items-center justify-between mt-1">
@@ -599,11 +599,11 @@ const MessagesPage = () => {
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center h-32 text-center">
-                    <MessageCircle className="w-12 h-12 text-gray-400 mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    <MessageCircle className="w-12 h-12 text-secondary-400 mb-4" />
+                    <h3 className="text-lg font-medium text-secondary-900 dark:text-secondary-100 mb-2">
                       Start your conversation
                     </h3>
-                    <p className="text-gray-500 dark:text-gray-400">
+                    <p className="text-secondary-500 dark:text-secondary-400">
                       Send a message to begin chatting with {selectedConversation.otherUser.firstName}
                     </p>
                   </div>
@@ -612,15 +612,15 @@ const MessagesPage = () => {
               </div>
 
               {/* Message Input */}
-              <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="p-4 border-t border-secondary-200 dark:border-secondary-700">
                 <div className="flex items-center space-x-2">
-                  <Button
+                  {/* <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
                   >
                     <Paperclip className="w-5 h-5" />
-                  </Button>
+                  </Button> */}
                   <div className="flex-1">
                     <Input
                       type="text"
@@ -655,11 +655,11 @@ const MessagesPage = () => {
           ) : (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <MessageCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                <MessageCircle className="w-16 h-16 text-secondary-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-secondary-900 dark:text-secondary-100 mb-2">
                   Select a conversation
                 </h3>
-                <p className="text-gray-500 dark:text-gray-400">
+                <p className="text-secondary-500 dark:text-secondary-400">
                   Choose a conversation from the list to start messaging
                 </p>
               </div>

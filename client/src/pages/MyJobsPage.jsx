@@ -141,7 +141,7 @@ const MyJobsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-secondary-50 dark:bg-secondary-950 flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -149,12 +149,12 @@ const MyJobsPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-secondary-50 dark:bg-secondary-950 flex items-center justify-center">
         <div className="text-center space-y-4">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-2xl font-bold text-secondary-900 dark:text-secondary-100">
             Error Loading Jobs
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <p className="text-secondary-600 dark:text-secondary-400">
             Failed to load your jobs. Please try again later.
           </p>
         </div>
@@ -163,7 +163,7 @@ const MyJobsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-secondary-50 dark:bg-secondary-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
@@ -172,10 +172,10 @@ const MyJobsPage = () => {
               <span className="text-3xl">📋</span>
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+              <h1 className="text-3xl font-bold text-secondary-900 dark:text-secondary-100 tracking-tight">
                 My Jobs
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1.5">
+              <p className="text-secondary-600 dark:text-secondary-400 mt-1.5">
                 Manage and track your job postings
               </p>
             </div>
@@ -197,14 +197,14 @@ const MyJobsPage = () => {
             { icon: Users, label: 'In Progress', value: myJobs.filter(job => job.status === 'accepted' || job.status === 'in_progress').length, color: 'from-amber-500 to-amber-600' },
             { icon: CheckCircle, label: 'Completed', value: myJobs.filter(job => job.status === 'completed').length, color: 'from-emerald-500 to-emerald-600' }
           ].map((stat, index) => (
-            <div key={index} className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 dark:border-gray-800/50">
+            <div key={index} className="bg-white dark:bg-secondary-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300 border border-secondary-100 dark:border-secondary-800/50">
               <div className="flex items-center gap-4">
                 <div className={`w-12 h-12 bg-gradient-to-br ${stat.color} rounded-xl flex items-center justify-center shadow-inner`}>
                   <stat.icon className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</p>
+                  <p className="text-sm font-medium text-secondary-600 dark:text-secondary-400">{stat.label}</p>
+                  <p className="text-2xl font-bold text-secondary-900 dark:text-secondary-100">{stat.value}</p>
                 </div>
               </div>
             </div>
@@ -213,14 +213,14 @@ const MyJobsPage = () => {
 
         {/* Jobs List */}
         {myJobs.length === 0 ? (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-12 text-center shadow-sm border border-gray-100 dark:border-gray-800/50">
-            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-gray-400" />
+          <div className="bg-white dark:bg-secondary-900 rounded-2xl p-12 text-center shadow-sm border border-secondary-100 dark:border-secondary-800/50">
+            <div className="w-16 h-16 bg-secondary-100 dark:bg-secondary-800 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8 text-secondary-400" />
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+            <h3 className="text-lg font-medium text-secondary-900 dark:text-secondary-100 mb-2">
               No jobs posted yet
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-secondary-600 dark:text-secondary-400 mb-6">
               Start by posting your first job to find skilled professionals.
             </p>
             <Link
@@ -233,13 +233,13 @@ const MyJobsPage = () => {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {myJobs.map((job) => (
-              <div key={job._id} className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 dark:border-gray-800/50">
+              <div key={job._id} className="bg-white dark:bg-secondary-900 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-secondary-100 dark:border-secondary-800/50">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-lg font-semibold text-secondary-900 dark:text-secondary-100 mb-2">
                       {job.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2">
+                    <p className="text-secondary-600 dark:text-secondary-400 text-sm line-clamp-2">
                       {job.description}
                     </p>
                   </div>
@@ -249,21 +249,21 @@ const MyJobsPage = () => {
                 </div>
 
                 <div className="space-y-3 mb-4">
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center text-sm text-secondary-600 dark:text-secondary-400">
                     <DollarSign className="w-4 h-4 mr-2" />
                     {formatBudget(job)}
                   </div>
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center text-sm text-secondary-600 dark:text-secondary-400">
                     <MapPin className="w-4 h-4 mr-2" />
                     {formatLocation(job.location)}
                   </div>
-                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center text-sm text-secondary-600 dark:text-secondary-400">
                     <Calendar className="w-4 h-4 mr-2" />
                     Posted {new Date(job.createdAt).toLocaleDateString()}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div className="flex items-center justify-between pt-4 border-t border-secondary-100 dark:border-secondary-800">
                   <div className="flex items-center gap-4">
                     <Link
                       to={`/jobs/${job._id}`}
@@ -272,16 +272,16 @@ const MyJobsPage = () => {
                       <Eye className="w-4 h-4 mr-1" />
                       View
                     </Link>
-                    <button 
+                    <button
                       onClick={() => handleEditJob(job)}
                       disabled={job.status === 'in_progress' || job.status === 'completed'}
-                      className="flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="flex items-center text-secondary-600 dark:text-secondary-400 hover:text-secondary-700 dark:hover:text-secondary-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       title={job.status === 'in_progress' || job.status === 'completed' ? 'Cannot edit jobs that are in progress or completed' : 'Edit job'}
                     >
                       <Edit className="w-4 h-4 mr-1" />
                       Edit
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDeleteJob(job)}
                       disabled={deleteJobMutation.isLoading || job.status === 'in_progress' || job.status === 'completed'}
                       className="flex items-center text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
@@ -292,7 +292,7 @@ const MyJobsPage = () => {
                     </button>
                   </div>
                   {job.assignedTo && (
-                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <div className="text-sm text-secondary-600 dark:text-secondary-400">
                       Assigned to {job.assignedTo.firstName} {job.assignedTo.lastName}
                     </div>
                   )}
@@ -305,7 +305,7 @@ const MyJobsPage = () => {
         {/* Edit Job Modal */}
         {showEditForm && editingJob && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden border border-gray-100/20 dark:border-gray-800/20">
+            <div className="bg-white dark:bg-secondary-900 rounded-3xl shadow-2xl max-w-5xl w-full max-h-[95vh] overflow-hidden border border-secondary-100/20 dark:border-secondary-800/20">
               {/* Modal Header */}
               <div className="relative bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-600 dark:to-blue-700 text-white p-6">
                 <div className="flex items-center justify-between">
@@ -350,8 +350,8 @@ const MyJobsPage = () => {
               </div>
               
               {/* Modal Footer */}
-              <div className="bg-gray-50 dark:bg-gray-900/50 p-4 border-t border-gray-100 dark:border-gray-800">
-                <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+              <div className="bg-secondary-50 dark:bg-secondary-900/50 p-4 border-t border-secondary-100 dark:border-secondary-800">
+                <div className="flex items-center justify-between text-sm text-secondary-600 dark:text-secondary-400">
                   <div className="flex items-center gap-4">
                     <span>Last updated: {new Date(editingJob.updatedAt || editingJob.createdAt).toLocaleDateString()}</span>
                     <span className="hidden sm:inline">•</span>
