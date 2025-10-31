@@ -231,17 +231,15 @@ export const apiService = {
     updateSettings: (data) => api.put('/admin/settings', data)
   },
 
-  // Payment endpoints
+  // Razorpay payment endpoints
   payments: {
-    createPaymentIntent: (data) => api.post('/payments/create-intent', data),
-    confirmPayment: (paymentId, data) => api.post(`/payments/${paymentId}/confirm`, data),
+    createPaymentOrder: (data) => api.post('/payments/create-order', data),
+    verifyPayment: (data) => api.post('/payments/verify', data),
     getPaymentDetails: (paymentId) => api.get(`/payments/details/${paymentId}`),
     getUserPayments: (params) => api.get('/payments/user', { params }),
     getPaymentStats: (params) => api.get('/payments/stats', { params }),
-    releaseEscrow: (paymentId) => api.post(`/payments/${paymentId}/release-escrow`),
-    createDispute: (paymentId, data) => api.post(`/payments/${paymentId}/dispute`, data),
-    resolveDispute: (paymentId, data) => api.put(`/payments/${paymentId}/resolve-dispute`, data),
-    getDisputes: (params) => api.get('/payments/disputes', { params })
+    getPaymentByJobId: (jobId) => api.get(`/payments/job/${jobId}`),
+    createRefund: (paymentId) => api.post(`/payments/${paymentId}/refund`)
   },
 
   // Search endpoints

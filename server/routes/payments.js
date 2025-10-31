@@ -1,35 +1,42 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateUser } = require('../middleware/auth');
-const { requireAdmin } = require('../middleware/admin');
 const {
-  createPaymentIntent,
-  confirmPayment,
+  createPaymentOrder,
+  verifyPayment,
   getPaymentDetails,
   getUserPayments,
   getPaymentStats,
-  releaseEscrow,
-  createDispute,
-  resolveDispute,
-  getDisputes,
+  handleWebhook,
+  createRefund,
+  getPaymentByJobId,
   paymentValidation
 } = require('../controllers/paymentController');
 
-// Payment processing routes
-router.post('/create-intent', authenticateUser, paymentValidation, createPaymentIntent);
-router.post('/:paymentId/confirm', authenticateUser, confirmPayment);
+// Razorpay payment routes
 
-// Payment management routes
+// Create payment order (called when user clicks "Pay Now")
+router.post('/create-order', authenticateUser, paymentValidation, createPaymentOrder);
+
+// Verify payment after completion
+router.post('/verify', authenticateUser, verifyPayment);
+
+// Get payment details
 router.get('/details/:paymentId', authenticateUser, getPaymentDetails);
+
+// Get all user payments
 router.get('/user', authenticateUser, getUserPayments);
+
+// Get payment statistics
 router.get('/stats', authenticateUser, getPaymentStats);
 
-// Escrow management
-router.post('/:paymentId/release-escrow', authenticateUser, releaseEscrow);
+// Get payment by job ID
+router.get('/job/:jobId', authenticateUser, getPaymentByJobId);
 
-// Dispute management
-router.post('/:paymentId/dispute', authenticateUser, createDispute);
-router.put('/:paymentId/resolve-dispute', authenticateUser, requireAdmin, resolveDispute);
-router.get('/disputes', authenticateUser, requireAdmin, getDisputes);
+// Create refund
+router.post('/:paymentId/refund', authenticateUser, createRefund);
 
-module.exports = router; 
+// Razorpay webhook (no auth required - Razorpay calls this)
+router.post('/webhook', express.raw({ type: 'application/json' }), handleWebhook);
+
+module.exports = router;

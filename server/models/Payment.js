@@ -8,10 +8,15 @@ const paymentSchema = new mongoose.Schema({
     unique: true,
     index: true
   },
-  stripePaymentIntentId: {
+  razorpayOrderId: {
     type: String,
     required: true,
     unique: true
+  },
+  razorpayPaymentId: {
+    type: String,
+    unique: true,
+    sparse: true
   },
   
   // Job and user references
@@ -42,8 +47,8 @@ const paymentSchema = new mongoose.Schema({
   },
   currency: {
     type: String,
-    default: 'usd',
-    enum: ['usd', 'eur', 'gbp', 'cad', 'aud']
+    default: 'INR',
+    enum: ['INR', 'USD', 'EUR']
   },
   platformFee: {
     type: Number,
@@ -69,12 +74,13 @@ const paymentSchema = new mongoose.Schema({
   paymentMethod: {
     type: {
       type: String,
-      enum: ['card', 'bank_transfer', 'digital_wallet'],
-      required: true
+      enum: ['card', 'upi', 'netbanking', 'wallet', 'bank_transfer'],
+      default: 'upi'
     },
-    last4: String,
-    brand: String,
-    country: String
+    details: String,
+    vpa: String, // For UPI
+    wallet: String, // For wallets like Paytm, PhonePe
+    bank: String // For netbanking
   },
   
   // Escrow details

@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { 
-  CreditCard, 
-  Lock, 
-  Shield, 
+import {
+  CreditCard,
+  Smartphone,
+  Wallet,
+  Building2,
+  Shield,
   CheckCircle,
   AlertCircle,
   DollarSign
@@ -16,158 +16,254 @@ import { Card } from '../UI/Card';
 import { Button } from '../UI/Button';
 import { LoadingSpinner } from '../UI/LoadingSpinner';
 
-// Load Stripe
-const stripePromise = loadStripe(process.env.VITE_STRIPE_PUBLISHABLE_KEY);
-
-const PaymentFormContent = ({ job, onSuccess }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+const PaymentForm = ({ job, onSuccess }) => {
   const queryClient = useQueryClient();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedMethod, setSelectedMethod] = useState('upi');
 
-  // Create payment intent mutation
-  const createPaymentIntentMutation = useMutation({
-    mutationFn: (data) => api.payments.createPaymentIntent(data),
-    onSuccess: (data) => {
-      handlePayment(data);
+  // Payment methods available in Razorpay
+  const paymentMethods = [
+    {
+      id: 'upi',
+      name: 'UPI',
+      icon: <Smartphone className="h-5 w-5" />,
+      description: 'Google Pay, PhonePe, Paytm, etc.'
+    },
+    {
+      id: 'card',
+      name: 'Card',
+      icon: <CreditCard className="h-5 w-5" />,
+      description: 'Credit/Debit Cards'
+    },
+    {
+      id: 'wallet',
+      name: 'Wallet',
+      icon: <Wallet className="h-5 w-5" />,
+      description: 'Paytm, PhonePe, Amazon Pay'
+    },
+    {
+      id: 'netbanking',
+      name: 'Net Banking',
+      icon: <Building2 className="h-5 w-5" />,
+      description: 'All major banks'
+    }
+  ];
+
+  // Load Razorpay script
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  // Create payment order mutation
+  const createOrderMutation = useMutation({
+    mutationFn: (data) => api.payments.createPaymentOrder(data),
+    onSuccess: async (data) => {
+      await handleRazorpayPayment(data);
     },
     onError: (error) => {
-      setError(error.response?.data?.message || 'Failed to create payment');
+      setError(error.response?.data?.message || 'Failed to create payment order');
       setIsProcessing(false);
+      toast.error('Failed to initiate payment');
     }
   });
 
-  // Confirm payment mutation
-  const confirmPaymentMutation = useMutation({
-    mutationFn: (data) => api.payments.confirmPayment(data.paymentId, data),
+  // Verify payment mutation
+  const verifyPaymentMutation = useMutation({
+    mutationFn: (data) => api.payments.verifyPayment(data),
     onSuccess: () => {
-      toast.success('Payment completed successfully!');
+      toast.success('Payment completed successfully! 🎉');
       queryClient.invalidateQueries({ queryKey: ['jobs'] });
       queryClient.invalidateQueries({ queryKey: ['payments'] });
-      onSuccess();
+      setIsProcessing(false);
+      if (onSuccess) onSuccess();
     },
     onError: (error) => {
-      setError(error.response?.data?.message || 'Payment failed');
+      setError(error.response?.data?.message || 'Payment verification failed');
       setIsProcessing(false);
+      toast.error('Payment verification failed');
     }
   });
 
-  const handlePayment = async (paymentData) => {
-    if (!stripe || !elements) {
-      setError('Stripe not loaded');
+  // Handle Razorpay payment
+  const handleRazorpayPayment = async (orderData) => {
+    // Load Razorpay script
+    const scriptLoaded = await loadRazorpayScript();
+    if (!scriptLoaded) {
+      setError('Failed to load Razorpay. Please check your internet connection.');
       setIsProcessing(false);
       return;
     }
 
-    const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-      paymentData.clientSecret,
-      {
-        payment_method: {
-          card: elements.getElement(CardElement),
-          billing_details: {
-            name: job.creator?.firstName + ' ' + job.creator?.lastName,
-          },
+    // Razorpay payment options
+    const options = {
+      key: orderData.key, // Razorpay Key ID from backend
+      amount: orderData.amount, // Amount in paise
+      currency: orderData.currency,
+      name: 'Fixify',
+      description: `Payment for: ${orderData.jobTitle}`,
+      order_id: orderData.orderId,
+      prefill: {
+        name: job.creator?.firstName + ' ' + job.creator?.lastName,
+        email: job.creator?.email || '',
+      },
+      notes: {
+        jobId: job._id,
+        helperName: orderData.helperName
+      },
+      theme: {
+        color: '#3B82F6' // Blue color
+      },
+      // Payment method preference
+      method: selectedMethod,
+      handler: function (response) {
+        // Payment successful - verify on backend
+        verifyPaymentMutation.mutate({
+          razorpay_order_id: response.razorpay_order_id,
+          razorpay_payment_id: response.razorpay_payment_id,
+          razorpay_signature: response.razorpay_signature,
+          paymentMethod: selectedMethod
+        });
+      },
+      modal: {
+        ondismiss: function () {
+          setIsProcessing(false);
+          toast.error('Payment cancelled');
         }
       }
-    );
+    };
 
-    if (stripeError) {
-      setError(stripeError.message);
+    // Open Razorpay payment modal
+    const razorpay = new window.Razorpay(options);
+    razorpay.on('payment.failed', function (response) {
+      setError(response.error.description);
       setIsProcessing(false);
-    } else if (paymentIntent.status === 'succeeded') {
-      confirmPaymentMutation.mutate({
-        paymentId: paymentData.paymentId,
-        paymentIntentId: paymentIntent.id
-      });
-    }
+      toast.error('Payment failed: ' + response.error.description);
+    });
+    razorpay.open();
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Get the payment amount from job budget
+  const getPaymentAmount = () => {
+    // If budget is an object with min/max, use max value
+    // Otherwise use the budget directly
+    if (job.budget && typeof job.budget === 'object') {
+      return job.budget.max || job.budget.min || 0;
+    }
+    return job.budget || 0;
+  };
+
+  const paymentAmount = getPaymentAmount();
+
+  // Handle payment submission
+  const handlePayment = async () => {
     setError(null);
     setIsProcessing(true);
 
-    createPaymentIntentMutation.mutate({
+    // Create payment order
+    createOrderMutation.mutate({
       jobId: job._id,
-      amount: job.budget * 100, // Convert to cents
-      currency: 'usd'
+      amount: paymentAmount,
+      currency: 'INR'
     });
   };
 
   const formatAmount = (amount) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
       style: 'currency',
-      currency: 'USD'
+      currency: 'INR'
     }).format(amount);
   };
-
-  const platformFee = Math.round(job.budget * 0.05);
-  const helperAmount = job.budget - platformFee;
 
   return (
     <Card>
       <Card.Header>
         <Card.Title className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          Payment Details
+          Make Payment
         </Card.Title>
         <Card.Description>
-          Secure payment for job: {job.title}
+          Pay for job: {job.title}
         </Card.Description>
       </Card.Header>
       <Card.Content>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-6">
           {/* Payment Summary */}
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-3">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 space-y-3">
             <h4 className="font-medium text-gray-900 dark:text-white">
               Payment Summary
             </h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600 dark:text-gray-400">Job Amount:</span>
-                <span className="font-medium">{formatAmount(job.budget)}</span>
+                <span className="font-medium">{formatAmount(paymentAmount)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600 dark:text-gray-400">Platform Fee (5%):</span>
-                <span className="font-medium text-red-600">{formatAmount(platformFee)}</span>
+              <div className="flex justify-between text-green-600 dark:text-green-400">
+                <span>Platform Fee:</span>
+                <span className="font-medium">₹0 (Free!)</span>
+              </div>
+              <div className="flex justify-between border-t pt-2 border-gray-300 dark:border-gray-600">
+                <span className="text-gray-900 dark:text-white font-medium">Helper Receives:</span>
+                <span className="font-bold text-lg text-green-600">{formatAmount(paymentAmount)}</span>
               </div>
               <div className="flex justify-between border-t pt-2">
-                <span className="text-gray-900 dark:text-white font-medium">Total:</span>
-                <span className="font-bold text-lg">{formatAmount(job.budget)}</span>
+                <span className="text-gray-900 dark:text-white font-bold text-lg">You Pay:</span>
+                <span className="font-bold text-xl text-blue-600">{formatAmount(paymentAmount)}</span>
               </div>
             </div>
           </div>
 
-          {/* Card Element */}
-          <div className="space-y-2">
+          {/* Payment Method Selection */}
+          <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Card Information
+              Select Payment Method
             </label>
-            <div className="border border-gray-300 dark:border-gray-600 rounded-md p-3">
-              <CardElement
-                options={{
-                  style: {
-                    base: {
-                      fontSize: '16px',
-                      color: '#424770',
-                      '::placeholder': {
-                        color: '#aab7c4',
-                      },
-                    },
-                    invalid: {
-                      color: '#9e2146',
-                    },
-                  },
-                }}
-              />
+            <div className="grid grid-cols-2 gap-3">
+              {paymentMethods.map((method) => (
+                <button
+                  key={method.id}
+                  onClick={() => setSelectedMethod(method.id)}
+                  className={`
+                    p-4 rounded-lg border-2 transition-all
+                    ${
+                      selectedMethod === method.id
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                        : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
+                    }
+                  `}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`
+                      ${selectedMethod === method.id ? 'text-blue-600' : 'text-gray-600 dark:text-gray-400'}
+                    `}>
+                      {method.icon}
+                    </div>
+                    <div className="text-left">
+                      <div className="font-medium text-gray-900 dark:text-white">
+                        {method.name}
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        {method.description}
+                      </div>
+                    </div>
+                  </div>
+                </button>
+              ))}
             </div>
           </div>
 
-          {/* Security Info */}
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <Lock className="h-4 w-4" />
-            <span>Your payment information is secure and encrypted</span>
+          {/* Test Mode Info */}
+          <div className="flex items-center gap-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
+            <AlertCircle className="h-4 w-4 text-yellow-600" />
+            <span className="text-yellow-700 dark:text-yellow-300 text-sm">
+              <strong>Test Mode:</strong> No real money will be charged. Use test credentials.
+            </span>
           </div>
 
           {/* Error Display */}
@@ -178,21 +274,21 @@ const PaymentFormContent = ({ job, onSuccess }) => {
             </div>
           )}
 
-          {/* Submit Button */}
+          {/* Pay Button */}
           <Button
-            type="submit"
-            disabled={!stripe || isProcessing}
-            className="w-full"
+            onClick={handlePayment}
+            disabled={isProcessing}
+            className="w-full py-3 text-lg"
           >
             {isProcessing ? (
               <>
                 <LoadingSpinner size="sm" />
-                Processing Payment...
+                Processing...
               </>
             ) : (
               <>
-                <DollarSign className="h-4 w-4" />
-                Pay {formatAmount(job.budget)}
+                <DollarSign className="h-5 w-5" />
+                Pay {formatAmount(paymentAmount)}
               </>
             )}
           </Button>
@@ -201,29 +297,31 @@ const PaymentFormContent = ({ job, onSuccess }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
               <Shield className="h-4 w-4 text-green-500" />
-              <span>Escrow Protection</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <CheckCircle className="h-4 w-4 text-green-500" />
               <span>Secure Payment</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-              <Lock className="h-4 w-4 text-green-500" />
-              <span>SSL Encrypted</span>
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              <span>100% to Helper</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              <CreditCard className="h-4 w-4 text-green-500" />
+              <span>All Methods</span>
             </div>
           </div>
-        </form>
+
+          {/* Test Payment Info */}
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 space-y-2 text-sm">
+            <h5 className="font-medium text-gray-900 dark:text-white">Test Payment Details:</h5>
+            <ul className="space-y-1 text-gray-600 dark:text-gray-400">
+              <li>• <strong>UPI:</strong> Use success@razorpay or failure@razorpay</li>
+              <li>• <strong>Card:</strong> 4111 1111 1111 1111, CVV: 123, Any future date</li>
+              <li>• <strong>Wallet:</strong> Select any wallet and use test OTP: 0000</li>
+            </ul>
+          </div>
+        </div>
       </Card.Content>
     </Card>
   );
 };
 
-const PaymentForm = ({ job, onSuccess }) => {
-  return (
-    <Elements stripe={stripePromise}>
-      <PaymentFormContent job={job} onSuccess={onSuccess} />
-    </Elements>
-  );
-};
-
-export default PaymentForm; 
+export default PaymentForm;

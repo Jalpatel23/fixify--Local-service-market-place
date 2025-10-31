@@ -28,7 +28,8 @@ import {
   Heart,
   Share2,
   Bookmark,
-  ExternalLink
+  ExternalLink,
+  CreditCard
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useAuth as useClerkAuth } from '@clerk/clerk-react';
@@ -36,6 +37,7 @@ import { apiService } from '../services/api';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import ConfirmationModal from '../components/UI/ConfirmationModal';
 import AuthPrompt from '../components/Auth/AuthPrompt';
+import PaymentForm from '../components/Payments/PaymentForm';
 import toast from 'react-hot-toast';
 import MapComponent from '../components/Map/Map';
 import { jobCategories, experienceLevels } from '../utils/config';
@@ -65,6 +67,9 @@ const JobDetailPage = () => {
     reopen: false,
     save: false
   });
+
+  // Payment modal state
+  const [showPaymentModal, setShowPaymentModal] = React.useState(false);
 
   // User location state
   const [userLocation, setUserLocation] = React.useState(null);
@@ -328,6 +333,17 @@ const JobDetailPage = () => {
            job.creator?._id === userId;
   };
 
+  // Check if user can make payment
+  const canMakePayment = () => {
+    const userId = profile?._id;
+    return job &&
+           job.status === 'completed' &&
+           userId &&
+           job.creator?._id === userId &&
+           job.assignedTo && // Job has a helper
+           job.paymentStatus !== 'paid'; // Not already paid
+  };
+
   // Check if job is saved by current user
   const isJobSaved = () => {
     const userId = profile?._id;
@@ -562,6 +578,23 @@ const JobDetailPage = () => {
                   </button>
                 )}
 
+                {canMakePayment() && (
+                  <button
+                    onClick={() => setShowPaymentModal(true)}
+                    className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all flex items-center font-medium shadow-lg"
+                  >
+                    <CreditCard className="w-5 h-5 mr-2" />
+                    Pay Now
+                  </button>
+                )}
+
+                {job?.paymentStatus === 'paid' && job?.creator?._id === profile?._id && (
+                  <div className="px-6 py-3 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-lg flex items-center font-medium border-2 border-green-300 dark:border-green-700">
+                    <CheckCircle className="w-5 h-5 mr-2" />
+                    Payment Completed
+                  </div>
+                )}
+
                 <AuthPrompt requireAuth={true} promptMessage="Please sign in to save this job">
                   {canSaveJob() && (
                     <button
@@ -598,6 +631,31 @@ const JobDetailPage = () => {
                 </AuthPrompt>
               </div>
             </div>
+
+            {/* Payment Section */}
+            {showPaymentModal && canMakePayment() && (
+              <div className="bg-white dark:bg-secondary-800 rounded-xl shadow-sm border border-secondary-200 dark:border-secondary-700 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold text-secondary-900 dark:text-secondary-100 flex items-center">
+                    <CreditCard className="w-5 h-5 mr-2" />
+                    Payment
+                  </h2>
+                  <button
+                    onClick={() => setShowPaymentModal(false)}
+                    className="text-secondary-500 hover:text-secondary-700 dark:text-secondary-400 dark:hover:text-secondary-200"
+                  >
+                    <AlertCircle className="w-5 h-5" />
+                  </button>
+                </div>
+                <PaymentForm
+                  job={job}
+                  onSuccess={() => {
+                    setShowPaymentModal(false);
+                    queryClient.invalidateQueries(['job', id]);
+                  }}
+                />
+              </div>
+            )}
 
             {/* Job Description */}
             <div className="bg-white dark:bg-secondary-800 rounded-xl shadow-sm border border-secondary-200 dark:border-secondary-700 p-6">
